@@ -1,7 +1,7 @@
-const x = (req, res) => {
-    const x = 5 + 5;
+const create = (req, res) => {
+    const user = req.body;
 
-    res.send({ x: x })
+    res.json(user)
 };
 
-module.exports = { x };
+module.exports = { create };
