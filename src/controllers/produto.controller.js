@@ -7,7 +7,7 @@ const createProduto = async (req, res) => {
         res.status(400).send({ message: "Preencha todos os campos para cadastrar produtos" })
     }
 
-    const produto = await produtoService.createProduto(req.body);
+    const produto = await produtoService.createProdutoService(req.body);
 
     if (!produto) {
         return res.status(400).send({ message: "Erro na criação do produto" })
@@ -26,4 +26,14 @@ const createProduto = async (req, res) => {
     });
 }
 
-module.exports = { createProduto }
+const findAllProdutos = async (req, res) => {
+    const produtos = await produtoService.findAllProdutosService();
+
+    if (produtos.length === 0) {
+        return res.status(400).send({ message: "Não há produtos cadastrados" })
+    }
+
+    res.send(produtos)
+};
+
+module.exports = { createProduto, findAllProdutos }

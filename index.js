@@ -1,9 +1,9 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const connectDataBase = require("./src/database/db");
+const connectDataBase = require('./src/database/db.js');
 
-const userRoute = require("../ALOJADSA/src/routes/user.route");
-const produtoRoute = require("../ALOJADSA/src/routes/produto.route");
+const userRoute = require('../ALOJADSA/src/routes/user.route.js');
+const produtoRoute = require('../ALOJADSA/src/routes/produto.route.js');
 
 const port = 3000;
 

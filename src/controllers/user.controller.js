@@ -7,7 +7,7 @@ const create = async (req, res) => {
         res.status(400).send({ message: "Preencha todos os campos para cadastro de usuário" })
     }
 
-    const user = await userService.create(req.body);
+    const user = await userService.createService(req.body);
 
     if (!user) {
         return res.status(400).send({ message: "Erro na criação do usuário" });
@@ -31,4 +31,14 @@ const create = async (req, res) => {
     });
 };
 
-module.exports = { create };
+const findAllUsers = async (req, res) => {
+    const users = await userService.findAllUsersService();
+
+    if (users.length === 0) {
+        return res.status(400).send({ message: "Não há usuários cadastrados" })
+    }
+
+    res.send(users)
+};
+
+module.exports = { create, findAllUsers };
