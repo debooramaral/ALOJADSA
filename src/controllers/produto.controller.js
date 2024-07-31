@@ -1,4 +1,5 @@
 const produtoService = require('../services/produto.service');
+const mongoose = require("mongoose");
 
 const createProduto = async (req, res) => {
     const { nome, preço, imagem, tipo, descriçao } = req.body;
@@ -36,4 +37,20 @@ const findAllProdutos = async (req, res) => {
     res.send(produtos)
 };
 
-module.exports = { createProduto, findAllProdutos }
+const findById = async (req, res) => {
+    const id = req.params.id
+
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(400).send({ message: "ID Inválido" })
+    }
+
+    const produto = await produtoService.findByIdService(id)
+
+    if (!produto) {
+        return res.status(400).send({ message: "Produto não encontrado" })
+    }
+
+    res.send(produto)
+};
+
+module.exports = { createProduto, findAllProdutos, findById }

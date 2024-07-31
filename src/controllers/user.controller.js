@@ -1,4 +1,5 @@
 const userService = require('../services/user.service');
+const mongoose = require("mongoose");
 
 const create = async (req, res) => {
     const { nome, cpf, telefone, endereço, email, senha, formapagamento, numerocartao, nometitular, datavalidade, codigosegurança } = req.body;
@@ -41,4 +42,32 @@ const findAllUsers = async (req, res) => {
     res.send(users)
 };
 
-module.exports = { create, findAllUsers };
+const findById = async (req, res) => {
+    const cpf = req.params.cpf
+
+    if(!mongoose.Types.ObjectId.isValid(cpf)){
+        return res.status(400).send({ message: "CPF inválido" })
+    }
+
+    const user = await userService.findByIdService(cpf)
+
+    if (!user) {
+        return res.status(400).send({ message: "Usuário não encontrado" })
+    }
+
+    res.send(user)
+};
+
+// const findOne = async (req, res) => {
+//     const cpf = req.params.cpf
+//     const user = await userService.findByOneService(cpf)
+//     if (!user) {
+//         return res.status(400).send({ message: "Usuário não encontrado ²" })
+//     }
+
+//     res.send(user)
+// }
+
+module.exports = { create, findAllUsers, findById };
+
+// findById, findOne
