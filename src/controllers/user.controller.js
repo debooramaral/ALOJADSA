@@ -58,16 +58,5 @@ const findById = async (req, res) => {
     res.send(user)
 };
 
-// const findOne = async (req, res) => {
-//     const cpf = req.params.cpf
-//     const user = await userService.findByOneService(cpf)
-//     if (!user) {
-//         return res.status(400).send({ message: "Usuário não encontrado ²" })
-//     }
-
-//     res.send(user)
-// }
-
 module.exports = { create, findAllUsers, findById };
 
-// findById, findOne
