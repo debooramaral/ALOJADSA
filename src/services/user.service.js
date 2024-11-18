@@ -4,10 +4,6 @@ const createService = (body) => User.create(body);
 
 const findAllUsersService = () => User.find();
 
-const findByIdService = (cpf) => User.findById(cpf);
+const findUserByCPF = (cpf) => User.findOne({cpf});
 
-// const findByOneService = (cpf) => User.findOne(cpf);
-
-module.exports = { createService, findAllUsersService, findByIdService };
-
-// findByIdService, findByOneService
+module.exports = { createService, findAllUsersService, findUserByCPF };

@@ -1,6 +1,8 @@
 const userService = require('../services/user.service');
 const mongoose = require("mongoose");
 
+const isValidCPF = require("../utils/validateCpf")
+
 const create = async (req, res) => {
     const { nome, cpf, telefone, endereço, email, senha, formapagamento, numerocartao, nometitular, datavalidade, codigosegurança } = req.body;
 
@@ -42,14 +44,14 @@ const findAllUsers = async (req, res) => {
     res.send(users)
 };
 
-const findById = async (req, res) => {
-    const cpf = req.params.cpf
+const getUserByCPF = async (req, res) => {
+    const {cpf} = req.params;
 
-    if(!mongoose.Types.ObjectId.isValid(cpf)){
-        return res.status(400).send({ message: "CPF inválido" })
-    }
+    // if(!isValidCPF(cpf)){
+    //     return res.status(400).send({ message: "CPF inválido" })
+    // }
 
-    const user = await userService.findByIdService(cpf)
+    const user = await userService.findUserByCPF(cpf);
 
     if (!user) {
         return res.status(400).send({ message: "Usuário não encontrado" })
@@ -58,5 +60,6 @@ const findById = async (req, res) => {
     res.send(user)
 };
 
-module.exports = { create, findAllUsers, findById };
+
+module.exports = { create, findAllUsers, getUserByCPF };
 
