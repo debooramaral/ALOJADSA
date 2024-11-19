@@ -1,11 +1,11 @@
 
 # A Loja DSA 🚀 
 
-
 ## E-COMMERCE
 
 Compra e Venda de Produtos, com Usuários Cadastrados e Estoque de Mercadorias
 
+### [![a loja DSA](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/alojadsa/)
 
 ## Autores
 
