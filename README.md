@@ -1,5 +1,25 @@
-# A Loja DSA
 
-Aplicação iniciada, Deus abençõe !
+# A Loja DSA 🚀 
 
-Go Go 🚀
+## E-COMMERCE
+
+Compra e Venda de Produtos, com Usuários Cadastrados e Estoque de Mercadorias
+
+### [![a loja DSA](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/alojadsa/)
+
+## Autores
+
+- [@debooramaral](https://github.com/debooramaral)
+
+
+## Aprendizados
+
+O que você aprendeu construindo esse projeto? 
+Basta um conhecimento novo, de uma tecnologia ou funcionalidade, deixei a imaginação ser livre e com desejo de contribuir para a sociedade. A ideia de 'resolver problemas' e ter soluções uteis. 
+
+Quais desafios você enfrentou e como você superou-os?
+Ter que descobrir tudo, encontrar respostas e possibilidades sem um professor ou orientador. Desbravar tudo sozinha, com ajuda de foruns e outros devs em plataformas na internet.
+
+
+
+
