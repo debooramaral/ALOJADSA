@@ -6,7 +6,7 @@ const isValidCPF = require("../utils/validateCpf")
 const create = async (req, res) => {
     const { nome, cpf, telefone, endereço, email, senha, formapagamento, numerocartao, nometitular, datavalidade, codigosegurança } = req.body;
 
-    if (!nome, !cpf, !telefone, !endereço, !email, !senha, !formapagamento, !numerocartao, !nometitular, !datavalidade, !codigosegurança) {
+    if (!nome || !cpf || !telefone || !endereço || !email || !senha || !formapagamento || !numerocartao || !nometitular || !datavalidade || !codigosegurança) {
         res.status(400).send({ message: "Preencha todos os campos para cadastro de usuário" })
     }
 
@@ -44,11 +44,15 @@ const findAllUsers = async (req, res) => {
     res.send(users)
 };
 
-const getUserByCPF = async (req, res) => {
-    const {cpf} = req.params;
+const getUserByCPF = async (req, res) => { //função adicionada a portir do chatgt
+    const cpf = req.params.cpf;
 
-    // if(!isValidCPF(cpf)){
+    // if(!isValidCPF(cpf)) {
     //     return res.status(400).send({ message: "CPF inválido" })
+    // }
+
+    // if(!mongoose.Types.ObjectId.isValid(cpf)){ //validação feita nas aulas do curso 
+    //     return res.status(400).send({message: "CPF Invalido"})
     // }
 
     const user = await userService.findUserByCPF(cpf);
@@ -60,6 +64,43 @@ const getUserByCPF = async (req, res) => {
     res.send(user)
 };
 
+const update = async (req, res) => {
+    //utilizando var devido o ES6 que não permite sobre-escrita 
+    var { nome, cpf, telefone, endereço, email, senha, formapagamento, numerocartao, nometitular, datavalidade, codigosegurança } = req.body;
 
-module.exports = { create, findAllUsers, getUserByCPF };
+    if (!nome && !cpf && !telefone && !endereço && !email && !senha && !formapagamento && !numerocartao && !nometitular && !datavalidade && !codigosegurança) {
+        res.status(400).send({ message: "Envie pelo menos um campo para atualização" })
+    }
+
+    var cpf = req.params.cpf;
+
+    if (!mongoose.Types.ObjectId.isValid(cpf)) {
+        return res.status(400).send({ message: "CPF Invalido" })
+    }
+
+    const user = await userService.findUserByCPF(cpf);
+
+    if (!user) {
+        return res.status(400).send({ message: "Usuário não encontrado" })
+    }
+
+    await userService.updateService(
+        nome,
+        cpf,
+        telefone,
+        endereço,
+        email,
+        senha,
+        formapagamento,
+        numerocartao,
+        nometitular,
+        datavalidade,
+        codigosegurança
+    );
+
+    res.send({ message: "Usuário atualizado com sucesso" })
+
+};
+
+module.exports = { create, findAllUsers, getUserByCPF, update };
 
