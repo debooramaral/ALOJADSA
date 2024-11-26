@@ -44,16 +44,11 @@ const findAllUsers = async (req, res) => {
     res.send(users)
 };
 
-const getUserByCPF = async (req, res) => { //função adicionada a portir do chatgt
+const getUserByCPF = async (req, res) => { //função adicionada a portir do chatgpt
     const cpf = req.params.cpf;
 
-    // if(!isValidCPF(cpf)) {
-    //     return res.status(400).send({ message: "CPF inválido" })
-    // }
-
-    // if(!mongoose.Types.ObjectId.isValid(cpf)){ //validação feita nas aulas do curso 
-    //     return res.status(400).send({message: "CPF Invalido"})
-    // }
+    // Ainda imaginando a melhor regra para uma validação de CPF. 
+    // Colocar algo mais simples, apenas verificação dentro do sistema deste dado
 
     const user = await userService.findUserByCPF(cpf);
 
@@ -65,18 +60,15 @@ const getUserByCPF = async (req, res) => { //função adicionada a portir do cha
 };
 
 const update = async (req, res) => {
-    //utilizando var devido o ES6 que não permite sobre-escrita 
-    var { nome, cpf, telefone, endereço, email, senha, formapagamento, numerocartao, nometitular, datavalidade, codigosegurança } = req.body;
+    let { nome, cpf, telefone, endereço, email, senha, formapagamento, numerocartao, nometitular, datavalidade, codigosegurança } = req.body;
 
     if (!nome && !cpf && !telefone && !endereço && !email && !senha && !formapagamento && !numerocartao && !nometitular && !datavalidade && !codigosegurança) {
         res.status(400).send({ message: "Envie pelo menos um campo para atualização" })
     }
+    
+    // não esta caindo na verificação acima ??? e sim direto na "atualização com sucesso"
 
-    var cpf = req.params.cpf;
-
-    if (!mongoose.Types.ObjectId.isValid(cpf)) {
-        return res.status(400).send({ message: "CPF Invalido" })
-    }
+    cpf = req.params.cpf;
 
     const user = await userService.findUserByCPF(cpf);
 
