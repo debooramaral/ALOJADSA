@@ -5,30 +5,14 @@ const createService = (body) => User.create(body);
 const findAllUsersService = () => User.find();
 
 const findUserByCPF = (cpf) => User.findOne({ cpf });
-const updateService = (
-    nome,
-    cpf,
-    telefone,
-    endereço,
-    email,
-    senha,
-    formapagamento,
-    numerocartao,
-    nometitular,
-    datavalidade,
-    codigosegurança
-) => User.findOneAndUpdate({ cpf: cpf }, {
-    nome,
-    telefone,
-    endereço,
-    email,
-    senha,
-    formapagamento,
-    numerocartao,
-    nometitular,
-    datavalidade,
-    codigosegurança
-}
-)
 
-module.exports = { createService, findAllUsersService, findUserByCPF, updateService };
+const updateServiceB = async (cpf, camposParaAtualizar) => {
+    await User.findOneAndUpdate(
+        { cpf }, // Filtra pelo CPF
+        { $set: camposParaAtualizar }, // Atualiza apenas os campos enviados
+        { new: true } // Retorna o documento atualizado
+    );
+};
+
+
+module.exports = { createService, findAllUsersService, findUserByCPF, updateServiceB };

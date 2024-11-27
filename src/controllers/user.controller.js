@@ -3,15 +3,34 @@ const mongoose = require("mongoose");
 
 const isValidCPF = require("../utils/validateCpf")
 
-const create = async (req, res) => {
-    const { nome, cpf, telefone, endereço, email, senha, formapagamento, numerocartao, nometitular, datavalidade, codigosegurança } = req.body;
+//auxilio do cunhado Kbça
+const create = async (req, res) => { 
+    const camposObrigatorios = [
+        'nome', 'cpf', 'telefone', 'endereço', 'email',
+        'senha', 'formapagamento', 'numerocartao',
+        'nometitular', 'datavalidade', 'codigosegurança'
+    ];
 
-    if (!nome || !cpf || !telefone || !endereço || !email || !senha || !formapagamento || !numerocartao || !nometitular || !datavalidade || !codigosegurança) {
-        res.status(400).send({ message: "Preencha todos os campos para cadastro de usuário" })
+    // Verificar se todos os campos obrigatórios estão presentes
+    const camposFaltando = camposObrigatorios.filter(campo => !req.body[campo]);
+
+    if (camposFaltando.length > 0) {
+        return res.status(400).send({
+            message: `Preencha todos os campos para cadastro de usuário. Faltando: ${camposFaltando.join(', ')}`
+        });
     }
 
-    const user = await userService.createService(req.body);
+    // Verificar se o CPF é válido
+    const cpf = req.body.cpf;
 
+    // Verificar se o CPF já existe no banco de dados
+    const cpfExiste = await userService.findUserByCPF(cpf);
+    if (cpfExiste) {
+        return res.status(400).send({ message: "CPF já cadastrado" });
+    }
+
+    // Criar o usuário no banco de dados
+    const user = await userService.createService(req.body);
     if (!user) {
         return res.status(400).send({ message: "Erro na criação do usuário" });
     }
@@ -20,16 +39,16 @@ const create = async (req, res) => {
         message: "Usuário criado com sucesso",
         user: {
             id: user._id,
-            nome,
-            cpf,
-            telefone,
-            endereço,
-            email,
-            formapagamento,
-            numerocartao,
-            nometitular,
-            datavalidade,
-            codigosegurança,
+            nome: req.body.nome,
+            cpf: req.body.cpf,
+            telefone: req.body.telefone,
+            endereço: req.body.endereço,
+            email: req.body.email,
+            formapagamento: req.body.formapagamento,
+            numerocartao: req.body.numerocartao,
+            nometitular: req.body.nometitular,
+            datavalidade: req.body.datavalidade,
+            codigosegurança: req.body.codigosegurança,
         },
     });
 };
@@ -44,11 +63,9 @@ const findAllUsers = async (req, res) => {
     res.send(users)
 };
 
-const getUserByCPF = async (req, res) => { //função adicionada a portir do chatgpt
+//função adicionada a portir do chatgpt
+const getUserByCPF = async (req, res) => { 
     const cpf = req.params.cpf;
-
-    // Ainda imaginando a melhor regra para uma validação de CPF. 
-    // Colocar algo mais simples, apenas verificação dentro do sistema deste dado
 
     const user = await userService.findUserByCPF(cpf);
 
@@ -59,39 +76,69 @@ const getUserByCPF = async (req, res) => { //função adicionada a portir do cha
     res.send(user)
 };
 
+//auxilio do cunhado kbça
 const update = async (req, res) => {
-    let { nome, cpf, telefone, endereço, email, senha, formapagamento, numerocartao, nometitular, datavalidade, codigosegurança } = req.body;
+    try {
+        const {
+            nome,
+            telefone,
+            endereço,
+            email,
+            senha,
+            formapagamento,
+            numerocartao,
+            nometitular,
+            datavalidade,
+            codigosegurança,
+        } = req.body;
 
-    if (!nome && !cpf && !telefone && !endereço && !email && !senha && !formapagamento && !numerocartao && !nometitular && !datavalidade && !codigosegurança) {
-        res.status(400).send({ message: "Envie pelo menos um campo para atualização" })
+        const cpfParam = req.params.cpf;
+
+        // Buscar o usuário no banco
+        const user = await userService.findUserByCPF(cpfParam);
+        if (!user) {
+            return res.status(404).send({ message: "Usuário não encontrado" });
+        }
+
+        // Verificar se os valores enviados são iguais aos armazenados
+        const isUnchanged =
+            //enviados (cliente) ----- armazenados (banco)
+            (nome === user.nome) &&
+            (telefone === user.telefone) &&
+            (endereço === user.endereço) &&
+            (email === user.email) &&
+            (senha === user.senha) &&
+            (formapagamento === user.formapagamento) &&
+            (numerocartao === user.numerocartao) &&
+            (nometitular === user.nometitular) &&
+            (datavalidade === user.datavalidade) &&
+            (codigosegurança === user.codigosegurança);
+
+        if (isUnchanged) {
+            return res.status(400).send({ message: "Nenhuma alteração detectada. Atualize pelo menos um campo." });
+        }
+
+        // Filtrar apenas os campos que precisam ser atualizados
+        const camposParaAtualizar = {};
+        if (nome !== user.nome) camposParaAtualizar.nome = nome;
+        if (telefone !== user.telefone) camposParaAtualizar.telefone = telefone;
+        if (endereço !== user.endereço) camposParaAtualizar.endereço = endereço;
+        if (email !== user.email) camposParaAtualizar.email = email;
+        if (senha !== user.senha) camposParaAtualizar.senha = senha;
+        if (formapagamento !== user.formapagamento) camposParaAtualizar.formapagamento = formapagamento;
+        if (numerocartao !== user.numerocartao) camposParaAtualizar.numerocartao = numerocartao;
+        if (nometitular !== user.nometitular) camposParaAtualizar.nometitular = nometitular;
+        if (datavalidade !== user.datavalidade) camposParaAtualizar.datavalidade = datavalidade;
+        if (codigosegurança !== user.codigosegurança) camposParaAtualizar.codigosegurança = codigosegurança;
+
+        // Atualizar os dados do usuário
+        await userService.updateServiceB(cpfParam, camposParaAtualizar);
+
+        res.send({ message: "Usuário atualizado com sucesso" });
+    } catch (error) {
+        console.error("Erro ao atualizar usuário:", error);
+        res.status(500).send({ message: "Erro interno no servidor" });
     }
-    
-    // não esta caindo na verificação acima ??? e sim direto na "atualização com sucesso"
-
-    cpf = req.params.cpf;
-
-    const user = await userService.findUserByCPF(cpf);
-
-    if (!user) {
-        return res.status(400).send({ message: "Usuário não encontrado" })
-    }
-
-    await userService.updateService(
-        nome,
-        cpf,
-        telefone,
-        endereço,
-        email,
-        senha,
-        formapagamento,
-        numerocartao,
-        nometitular,
-        datavalidade,
-        codigosegurança
-    );
-
-    res.send({ message: "Usuário atualizado com sucesso" })
-
 };
 
 module.exports = { create, findAllUsers, getUserByCPF, update };
