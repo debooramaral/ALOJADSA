@@ -6,9 +6,21 @@ const findAllProdutosService = () => Produto.find();
 
 const findByIdService = (id) => Produto.findById(id);
 
+//Tras array, uma lista de nomes
 const searchByNomeService = (nome) => Produto.find({
     nome: { $regex: `${nome || ""}`, $options: "i" }
-})
+});
+
+//Traz apenas um item ou nulo, para lidar apenas com um documento
+const findProdutoByNome = (nome) => Produto.findOne({ nome });
+
+const updateService = async (nome, camposParaAtualizar) => {
+    await Produto.findOneAndUpdate(
+        { nome },
+        { $set: camposParaAtualizar },
+        { new: true }
+    );
+};
 
 
-module.exports = { createProdutoService, findAllProdutosService, findByIdService, searchByNomeService };
+module.exports = { createProdutoService, findAllProdutosService, findByIdService, searchByNomeService, updateService, findProdutoByNome };

@@ -67,15 +67,15 @@ const findById = async (req, res) => {
 const searchByNome = async (req, res) => {
     try {
         const { nome } = req.query;
-        
+
         const produto = await produtoService.searchByNomeService(nome);
-        
+
         if (produto.length === 0) {
             return res.status(400).send({ message: "Não existe produto com este nome" });
         }
 
         return res.send({
-            results: produto.map((item) =>({
+            results: produto.map((item) => ({
                 id: item._id,
                 nome: item.nome,
                 preço: item.preço,
@@ -90,4 +90,46 @@ const searchByNome = async (req, res) => {
     }
 };
 
-module.exports = { createProduto, findAllProdutos, findById, searchByNome }
+const update = async (req, res) => {
+    try {
+        const { nome, preço, imagem, tipo, descriçao } = req.body;
+
+        const nomeParam = req.params.nome;
+
+        //Buscar no banco
+        const produto = await produtoService.findProdutoByNome(nomeParam);
+        if (!produto) {
+            return res.status(400).send({ message: "Produto não encontrado" });
+        }
+
+        //Verificar se os valores enviados são iguais aos armazenados
+        const NaoAlterado =
+            (nome === produto.nome) &&
+            (preço === produto.preço) &&
+            (imagem === produto.imagem) &&
+            (tipo === produto.tipo) &&
+            (descriçao === produto.descriçao);
+        if (NaoAlterado) {
+            return res.status(400).send({ message: "Nenhuma alteração feita. Atualize pelo menos um campo" });
+        }
+
+        //Filtrar apenas os campos que precisam ser atualizados
+        const camposParaAtualizar = {};
+        if (nome !== produto.nome) camposParaAtualizar.nome = nome;
+        if (preço !== produto.preço) camposParaAtualizar.preço = preço;
+        if (imagem !== produto.imagem) camposParaAtualizar.imagem = imagem;
+        if (tipo !== produto.tipo) camposParaAtualizar.tipo = tipo;
+        if (descriçao !== produto.descriçao) camposParaAtualizar.descriçao = descriçao;
+
+        //Atualizar os dados do produto
+        await produtoService.updateService(nomeParam, camposParaAtualizar);
+
+        res.send({message: "Produto Atualizado"});
+
+    } catch (error) {
+        console.error("Erro ao atualizar usuário:", error);
+        res.status(500).send({ message: "Erro interno no servidor" })
+    }
+};
+
+module.exports = { createProduto, findAllProdutos, findById, searchByNome, update }
