@@ -11,6 +11,6 @@ connectDataBase();
 
 app.use(express.json())
 app.use("/user", userRoute);
-app.use("/produto",produtoRoute);
+app.use("/produto", produtoRoute);
 
 app.listen(port, () => console.log(`Servidor Rodando na Porta ${port}`));

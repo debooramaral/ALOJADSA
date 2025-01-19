@@ -1,14 +1,14 @@
-const Produto = require("../models/Produto");
+const Produto = require("../models/Produto.js");
 
 const createProdutoService = (body) => Produto.create(body);
 
 const findAllProdutosService = () => Produto.find();
 
-// const findProdutoByNome = (nome) => Produto.findOne({ nome });
-
-const findProdutoByNome = async (filter) => {
-    return await Produto.findOne(filter);}; // Busca por "nome", especificado no filtro
-
 const findByIdService = (id) => Produto.findById(id);
 
-module.exports = { createProdutoService, findAllProdutosService, findProdutoByNome, findByIdService };
+const searchByNomeService = (nome) => Produto.find({
+    nome: { $regex: `${nome || ""}`, $options: "i" }
+})
+
+
+module.exports = { createProdutoService, findAllProdutosService, findByIdService, searchByNomeService };

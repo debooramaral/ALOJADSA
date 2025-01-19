@@ -1,4 +1,5 @@
-const produtoService = require('../services/produto.service');
+const { collection } = require('../models/Produto.js');
+const produtoService = require('../services/produto.service.js');
 const mongoose = require("mongoose");
 
 const createProduto = async (req, res) => {
@@ -62,31 +63,31 @@ const findById = async (req, res) => {
     res.send(produto)
 };
 
-//Buscar Produto por nome
-const getProdutoByNome = async (req, res) => {
-    const nomeP = req.params.nomeP;
-
-    // Verificar se o nome é uma string válida
-    if (!nomeP || typeof nomeP !== 'string' || nomeP.trim() === '') {
-        return res.status(400).send({ message: "Nome inválido" });
-    }
-
-    // Verificar se o nome já existe no banco de dados
+//Aula 24
+const searchByNome = async (req, res) => {
     try {
-        // Verificar se o produto já existe no banco de dados
-        const produto = await produtoService.findProdutoByNome({ nome: nomeP.trim() });
-
-        if (produto) {
-            return res.status(400).send({ message: "Este Produto já esta Cadastrado" });
+        const { nome } = req.query;
+        
+        const produto = await produtoService.searchByNomeService(nome);
+        
+        if (produto.length === 0) {
+            return res.status(400).send({ message: "Não existe produto com este nome" });
         }
 
-        // Caso o produto não exista
-        return res.status(400).send({message: "Produto não encontrado no banco de dados"})
-        
-    } catch (error) {
-        return res.status(500).send({ message: "Erro ao verificar o nome", error });
+        return res.send({
+            results: produto.map((item) =>({
+                id: item._id,
+                nome: item.nome,
+                preço: item.preço,
+                imagem: item.imagem,
+                tipo: item.tipo,
+                descriçao: item.descrição,
+            })),
+        });
+
+    } catch (err) {
+        res.status(500).send({ message: err.message })
     }
 };
 
-
-module.exports = { createProduto, findAllProdutos, findById, getProdutoByNome }
+module.exports = { createProduto, findAllProdutos, findById, searchByNome }
