@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const isValidCPF = require("../utils/validateCpf")
 
 //auxilio do cunhado Kbça
-const create = async (req, res) => { 
+const create = async (req, res) => {
     const camposObrigatorios = [
         'nome', 'cpf', 'telefone', 'endereço', 'email',
         'senha', 'formapagamento', 'numerocartao',
@@ -63,8 +63,24 @@ const findAllUsers = async (req, res) => {
     res.send(users)
 };
 
-//função adicionada a portir do chatgpt
-const getUserByCPF = async (req, res) => { 
+//Função aplicada para o Middleware.. mas não funciona, não mostra os dados de usuário 
+const findById = async (req, res) => {
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //     return res.status(400).send({ message: "ID Inválido" })
+    // }
+
+    const user = req.user;
+
+    // if (!user) {
+    //     return res.status(404).send({ message: "Usuário não encontrado :/" });
+    // }
+
+    res.send(user)
+};
+
+//função adicionada a portir do chatgpt 
+
+const getUserByCPF = async (req, res) => {
     const cpf = req.params.cpf;
 
     const user = await userService.findUserByCPF(cpf);
@@ -76,7 +92,7 @@ const getUserByCPF = async (req, res) => {
     res.send(user)
 };
 
-//auxilio do cunhado kbça
+//auxilio do cunhado kbça 
 const update = async (req, res) => {
     try {
         const {
@@ -92,10 +108,10 @@ const update = async (req, res) => {
             codigosegurança,
         } = req.body;
 
-        const cpfParam = req.params.cpf;
+        const cpf = req.params.cpf;
 
         // Buscar o usuário no banco
-        const user = await userService.findUserByCPF(cpfParam);
+        const user = await userService.findUserByCPF(cpf);
         if (!user) {
             return res.status(404).send({ message: "Usuário não encontrado" });
         }
@@ -132,14 +148,14 @@ const update = async (req, res) => {
         if (codigosegurança !== user.codigosegurança) camposParaAtualizar.codigosegurança = codigosegurança;
 
         // Atualizar os dados do usuário
-        await userService.updateServiceB(cpfParam, camposParaAtualizar);
+        await userService.updateServiceB(cpf, camposParaAtualizar);
 
         res.send({ message: "Usuário atualizado com sucesso" });
     } catch (error) {
         console.error("Erro ao atualizar usuário:", error);
-        res.status(500).send({ message: "Erro interno no servidor" });
+        res.status(500).send({ message: "Erro interno no servidor :@" });
     }
 };
 
-module.exports = { create, findAllUsers, getUserByCPF, update };
+module.exports = { create, findAllUsers, getUserByCPF, update, findById };
 

@@ -48,7 +48,7 @@ const findAllProdutos = async (req, res) => {
 
 //Manter..
 const findById = async (req, res) => {
-    const id = req.params.id
+    const id = req.params.id;
 
     // if (!mongoose.Types.ObjectId.isValid(id)) {
     //     return res.status(400).send({ message: "ID Inválido" })
@@ -57,7 +57,7 @@ const findById = async (req, res) => {
     const produto = await produtoService.findByIdService(id)
 
     if (!produto) {
-        return res.status(400).send({ message: "Produto não encontrado" })
+        return res.status(400).send({ message: "Produto não encontrado :#" })
     }
 
     res.send(produto)
@@ -88,13 +88,14 @@ const searchByNome = async (req, res) => {
     } catch (err) {
         res.status(500).send({ message: err.message })
     }
+
 };
 
 const update = async (req, res) => {
     try {
         const { nome, preço, imagem, tipo, descriçao } = req.body;
 
-        const nomeParam = req.params.nome;
+        const nomeParam = req.params.nome; //colocaro nome certinho cadastrado
 
         //Buscar no banco
         const produto = await produtoService.findProdutoByNome(nomeParam);

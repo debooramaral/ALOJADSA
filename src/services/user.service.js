@@ -4,6 +4,8 @@ const createService = (body) => User.create(body);
 
 const findAllUsersService = () => User.find();
 
+const findByIdService = (id) => User.findById(id);//para o Middleware
+
 const findUserByCPF = (cpf) => User.findOne({ cpf });
 
 const updateServiceB = async (cpf, camposParaAtualizar) => {
@@ -15,4 +17,6 @@ const updateServiceB = async (cpf, camposParaAtualizar) => {
 };
 
 
-module.exports = { createService, findAllUsersService, findUserByCPF, updateServiceB };
+
+
+module.exports = { createService, findAllUsersService, findUserByCPF, updateServiceB, findByIdService };
