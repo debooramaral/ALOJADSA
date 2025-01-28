@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt'
 
 const UserSchema = new mongoose.Schema({
     nome: {
@@ -25,6 +26,7 @@ const UserSchema = new mongoose.Schema({
     senha: {
         type: String,
         require: true,
+        select: false,
     },
     formapagamento: {
         type: String,
@@ -33,6 +35,7 @@ const UserSchema = new mongoose.Schema({
     numerocartao: {
         type: String,
         require: true,
+        select: false,
     },
     nometitular: {
         type: String,
@@ -41,12 +44,24 @@ const UserSchema = new mongoose.Schema({
     datavalidade: {
         type: String,
         require: true,
+        select: false,
     },
     codigosegurança: {
         type: String,
         require: true,
+        select: false,
     },
 });
+
+UserSchema.pre("save", async function (next) {
+    this.senha = await bcrypt.hash(this.senha, 10);
+    next();
+})
+
+UserSchema.pre("save", async function (next) {
+    this.codigosegurança = await bcrypt.hash(this.codigosegurança, 5);
+    next();
+})
 
 const User = mongoose.model("User", UserSchema);
 
