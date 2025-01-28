@@ -1,13 +1,12 @@
-const express = require('express');
+import express from 'express';
 const app = express();
-const connectDataBase = require('./src/database/db.js');
 
-const userRoute = require('../ALOJADSA/src/routes/user.route.js');
-const produtoRoute = require('../ALOJADSA/src/routes/produto.route.js');
-
+import connectDataBase from './src/database/db.js';
 const port = 3000;
-
 connectDataBase();
+
+import userRoute from '../ALOJADSA/src/routes/user.route.js';
+import produtoRoute from '../ALOJADSA/src/routes/produto.route.js';
 
 app.use(express.json())
 app.use("/user", userRoute);

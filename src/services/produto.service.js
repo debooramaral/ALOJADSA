@@ -1,4 +1,4 @@
-const Produto = require("../models/Produto.js");
+import Produto from "../models/Produto.js";
 
 const createProdutoService = (body) => Produto.create(body);
 
@@ -22,5 +22,4 @@ const updateService = async (nome, camposParaAtualizar) => {
     );
 };
 
-
-module.exports = { createProdutoService, findAllProdutosService, findByIdService, searchByNomeService, updateService, findProdutoByNome };
+export default { createProdutoService, findAllProdutosService, findByIdService, searchByNomeService, updateService, findProdutoByNome };

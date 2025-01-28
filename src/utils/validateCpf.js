@@ -28,3 +28,5 @@ function isValidCPF(cpf) {
 
     return true; // CPF válido
 }
+
+export default isValidCPF

@@ -1,5 +1,7 @@
-const route = require('express').Router();
-const produtoController = require('../controllers/produto.controller')
+import express from "express";
+import produtoController from '../controllers/produto.controller.js';
+
+const route = express.Router()
 
 route.post("/", produtoController.createProduto);
 route.get("/", produtoController.findAllProdutos);
@@ -8,4 +10,4 @@ route.get("/search", produtoController.searchByNome);
 route.patch("/:nome", produtoController.update);
 route.get("/:id", produtoController.findById); //manter . . 
 
-module.exports = route;
+export default route;

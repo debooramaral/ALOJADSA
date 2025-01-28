@@ -1,4 +1,4 @@
-const User = require("../models/User.js");
+import User from "../models/User.js";
 
 const createService = (body) => User.create(body);
 
@@ -16,7 +16,4 @@ const updateServiceB = async (cpf, camposParaAtualizar) => {
     );
 };
 
-
-
-
-module.exports = { createService, findAllUsersService, findUserByCPF, updateServiceB, findByIdService };
+export default { createService, findAllUsersService, findUserByCPF, updateServiceB, findByIdService };

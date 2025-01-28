@@ -1,66 +1,77 @@
-const { collection } = require('../models/Produto.js');
-const produtoService = require('../services/produto.service.js');
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+import produtoService from '../services/produto.service.js';
 
 const createProduto = async (req, res) => {
-    const camposObrigatoriosP = [
-        'nome', 'preço', 'imagem', 'tipo', 'descriçao'
-    ];
+    try {
+        const camposObrigatoriosP = [
+            'nome', 'preço', 'imagem', 'tipo', 'descriçao'
+        ];
 
-    //verifica se todos os campos obrigatorios estão presentes
+        //verifica se todos os campos obrigatorios estão presentes
 
-    const camposFaltandoP = camposObrigatoriosP.filter(campo => !req.body[campo]);
+        const camposFaltandoP = camposObrigatoriosP.filter(campo => !req.body[campo]);
 
-    if (camposFaltandoP.length > 0) {
-        return res.status(400).send({
-            message: `Preencha todos os campos para cadastrar produtos. Falta: ${camposFaltandoP.join(', ')}`
+        if (camposFaltandoP.length > 0) {
+            return res.status(400).send({
+                message: `Preencha todos os campos para cadastrar produtos. Falta: ${camposFaltandoP.join(', ')}`
+            });
+        }
+
+        const produto = await produtoService.createProdutoService(req.body);
+
+        if (!produto) {
+            return res.status(400).send({ message: "Erro na criação do produto" })
+        }
+
+        res.status(201).send({
+            message: "Produto criado com sucesso ",
+            produto: {
+                id: produto._id,
+                nome: req.body.nome,
+                preço: req.body.preço,
+                imagem: req.body.imagem,
+                tipo: req.body.tipo,
+                descriçao: req.body.descriçao,
+            },
         });
+    } catch (err) {
+        res.status(500).send({ message: err.message })
     }
-
-    const produto = await produtoService.createProdutoService(req.body);
-
-    if (!produto) {
-        return res.status(400).send({ message: "Erro na criação do produto" })
-    }
-
-    res.status(201).send({
-        message: "Produto criado com sucesso ",
-        produto: {
-            id: produto._id,
-            nome: req.body.nome,
-            preço: req.body.preço,
-            imagem: req.body.imagem,
-            tipo: req.body.tipo,
-            descriçao: req.body.descriçao,
-        },
-    });
 }
 
 const findAllProdutos = async (req, res) => {
-    const produtos = await produtoService.findAllProdutosService();
+    try {
+        const produtos = await produtoService.findAllProdutosService();
 
-    if (produtos.length === 0) {
-        return res.status(400).send({ message: "Não há produtos cadastrados" })
+        if (produtos.length === 0) {
+            return res.status(400).send({ message: "Não há produtos cadastrados" })
+        }
+
+        res.send(produtos)
+    } catch (err) {
+        res.status(500).send({ message: err.message })
     }
-
-    res.send(produtos)
 };
 
 //Manter..
 const findById = async (req, res) => {
-    const id = req.params.id;
+    try {
+        const id = req.params.id;
 
-    // if (!mongoose.Types.ObjectId.isValid(id)) {
-    //     return res.status(400).send({ message: "ID Inválido" })
-    // }
+        // if (!mongoose.Types.ObjectId.isValid(id)) {
+        //     return res.status(400).send({ message: "ID Inválido" })
+        // }
 
-    const produto = await produtoService.findByIdService(id)
+        const produto = await produtoService.findByIdService(id)
 
-    if (!produto) {
-        return res.status(400).send({ message: "Produto não encontrado :#" })
+        if (!produto) {
+            return res.status(400).send({ message: "Produto não encontrado :#" })
+        }
+
+        res.send(produto)
+    } catch (err) {
+        res.status(500).send({ message: err.message })
     }
-
-    res.send(produto)
 };
 
 //Aula 24
@@ -125,7 +136,7 @@ const update = async (req, res) => {
         //Atualizar os dados do produto
         await produtoService.updateService(nomeParam, camposParaAtualizar);
 
-        res.send({message: "Produto Atualizado"});
+        res.send({ message: "Produto Atualizado" });
 
     } catch (error) {
         console.error("Erro ao atualizar usuário:", error);
@@ -133,4 +144,4 @@ const update = async (req, res) => {
     }
 };
 
-module.exports = { createProduto, findAllProdutos, findById, searchByNome, update }
+export default { createProduto, findAllProdutos, findById, searchByNome, update }
