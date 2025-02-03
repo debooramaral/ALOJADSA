@@ -1,3 +1,6 @@
+import dotenv from 'dotenv' //Posição sugerida pelo chat gpt
+dotenv.config(); 
+
 import express from 'express';
 const app = express();
 
@@ -12,4 +15,5 @@ app.use(express.json())
 app.use("/user", userRoute);
 app.use("/produto", produtoRoute);
 
-app.listen(port, () => console.log(`Servidor Rodando na Porta ${port}`));
+app.listen(port, () => console.log(`Servidor Rodando na Porta ${port}`)); 
+
