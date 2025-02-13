@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import userService from "../services/user.service.js";
 
-import isValidCPF from "../utils/validateCpf.js"
+// import isValidCPF from "../utils/validateCpf.js"
 
 //auxilio do cunhado Kbça
 const create = async (req, res) => {
