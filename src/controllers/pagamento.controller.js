@@ -32,5 +32,4 @@ const findAll = async (req, res) => {
     }
 }
 
-
 export { create, findAll };
