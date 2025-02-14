@@ -6,7 +6,7 @@ const ProdutoSchema = new mongoose.Schema({
         require: true,
     },
     preço: {
-        type: String,
+        type: Number,
         require: true,
     },
     imagem: {

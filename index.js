@@ -17,7 +17,7 @@ app.use(express.json())
 app.use("/user", userRoute);
 app.use("/produto", produtoRoute);
 app.use("/auth", authRoute);
-app.use("/pagamento", pagamentoRoute)
+app.use("/pagamento", pagamentoRoute);
 
 app.listen(port, () => console.log(`Servidor Rodando na Porta ${port}`)); 
 

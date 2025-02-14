@@ -1,29 +1,39 @@
 import mongoose from "mongoose";
+import Produto from "./Produto.js";
+import User from "./User.js";
 
 const PagamentoSchema = new mongoose.Schema({ //Relacionamento de tabelas
-    nomeProduto: {
-        type: String,
-        require: true
-    },
-    serviço: {
-        type: Array,
-        require: true
-    },
-    produto: {
-        type: mongoose.Schema.Types.String, //Utilizar o NOME de produto
-        ref: "Produto",
-        required: true
-    },
     user: {
-        type: mongoose.Schema.Types.String, //Utilizar o CPF de usuário
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
+    produtos: [
+        {
+            produto: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Produto"
+            },
+            quantidade:{ 
+                type: Number,
+                required: true
+            }
+        }
+    ],
+    total: {
+        type: Number,
+        required: true
+    },
+    status: {
+        type: String,
+        enum: ["Pendente", "Pago", "Cancelado"],
+        default: "Pendente"
+    },
     createdAt: {
         type: Date,
-        default: Date.now(),
+        default: Date.now
     }
-})
+});
 
 const Pagamento = mongoose.model("Pagamento", PagamentoSchema);
 

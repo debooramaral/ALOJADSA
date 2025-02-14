@@ -1,37 +1,36 @@
 import { createService, findAllService } from "../services/pagamento.service.js"
 
+//Criar pagamento com base na sacola do usuário
 const create = async (req, res) => {
     try {
-        //Os demais dados serão feito automaticamente pelo login
-        const { nomeProduto } = req.body;
+        const { cpf } = req.params; //O CPF vem pela URL, como parametro
 
-        if (!nomeProduto) {
-            res.status(400).send({
-                message: "Envie o nome de produto para pagamento",
-            })
+        //Chama o serviço para criar o pagamento
+        const pagamento = await createService(cpf);
+
+        res.status(201).send(pagamento); //Retorna o pagamento criado
+    } catch (err) {
+        return res.status(500).send({ message: err.message }); //Trata o erro e retorna a mensagem
+    }
+
+}
+
+//Buscar todos os pagamenos
+const findAll = async (req, res) => {
+    try {
+        const pagamento = await findAllService(); //Chama o serviço para buscar todos os pagamentos
+
+        if (pagamento.length === 0) {
+            return res.status(404).send({
+                message: "Nenhum pagamento encontrado",
+            });
         }
 
-        await createService({
-            nomeProduto,
-            user: "cpf",
-        });
-
-        res.send(201);
+        res.status(200).send(pagamento); //Retorna os pagamentos encontrados
     } catch (err) {
-        res.status(500).send({ message: err.message });
+        return res.status(500).send({ message: err.message });
     }
-
 }
 
-const findAll = async (req, res) => {
-    const pagamento = await findAllService();
-
-    if (pagamento.length === 0) {
-        return res.status(400).send({
-            message: "Não há itens para pagamento",
-        })
-    }
-    res.send(pagamento);
-}
 
 export { create, findAll };
