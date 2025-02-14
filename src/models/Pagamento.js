@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const PagamentoSchema = new mongoose.Schema({ //Relacionamento de tabelas
+    nomeProduto: {
+        type: String,
+        require: true
+    },
     serviço: {
         type: Array,
         require: true
