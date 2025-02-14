@@ -19,7 +19,7 @@ app.use("/user", userRoute);
 app.use("/produto", produtoRoute);
 app.use("/auth", authRoute);
 app.use("/pagamento", pagamentoRoute);
-app.use("/", sacolaRoute)
+app.use(sacolaRoute);
 
 app.listen(port, () => console.log(`Servidor Rodando na Porta ${port}`)); 
 

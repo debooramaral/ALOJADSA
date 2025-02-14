@@ -4,12 +4,12 @@ import { addToSacola, removeFromSacola, viewSacola } from "../controllers/sacola
 const route = Router();
 
 //Adicionar produto a sacola
-route.post("/:cpf/sacola", addToSacola);
+route.post("/sacola/:cpf", addToSacola);
 
 //Remover produto da sacola
-route.delete("/:cpf/sacola", removeFromSacola);
+route.delete("/sacola/:cpf", removeFromSacola);
 
 //Visualizar sacola do usuário
-route.get("/:cpf/sacola", viewSacola);
+route.get("/sacola/:cpf", viewSacola);
 
 export default route;
