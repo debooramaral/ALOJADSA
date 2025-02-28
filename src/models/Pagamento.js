@@ -8,7 +8,7 @@ const PagamentoSchema = new mongoose.Schema({ //Relacionamento de tabelas
         ref: "User",
         required: true
     },
-    produtos: [
+    produto: [
         {
             produto: {
                 type: mongoose.Schema.Types.ObjectId,
