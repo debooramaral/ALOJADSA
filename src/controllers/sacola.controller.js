@@ -63,6 +63,6 @@ const viewSacola = async (req, res) => {
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
-};
+}; 
 
 export { addToSacola, removeFromSacola, viewSacola };

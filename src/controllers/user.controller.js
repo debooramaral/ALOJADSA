@@ -66,6 +66,7 @@ const findAllUsers = async (req, res) => {
         }
 
         res.send(users)
+
     } catch (err) {
         res.status(500).send({ message: err.message })
     }
