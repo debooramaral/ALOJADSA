@@ -32,50 +32,53 @@ const findAll = async (req, res) => {
 
     //Criar um mapa para armazenar a soma de pagamentos por usuário
     const pagamentosPorUsuario = {};
+    //Controle de pagamentos únicos
+    const pagamentosProcessados = new Set();
     //Variavel para armazenar o valor total de compras
     let somaTotalCompras = 0;
 
     pagamento.forEach((pagamento) => {
-      const userId = pagamento.usuario?.id.toString(); //Garante que pega p ID corretamente
+      const pagamentoId = pagamento._id?.toString(); //Separa pagamento por ID
+      const userId = pagamento.usuario?.id.toString(); //Garante que pega o ID corretamente
+      const userName = pagamento.usuario?.nome; //Obtendo o nome do usuário
       const valorPagamento = pagamento.total; //Acessa o valor total de pagamento
+
+      // Verifica se pagamento já foi processado
+      if (!userId || pagamentosProcessados.has(pagamentoId)) return;
+      pagamentosProcessados.add(pagamentoId);
 
       if (!userId) {
         return; //Se não tiver um ID, não continua a iteração
       }
 
       if (!pagamentosPorUsuario[userId]) {
-        pagamentosPorUsuario[userId] = { totalPagamentos: 0, totalCompra: 0 };
+        pagamentosPorUsuario[userId] = { nome: userName, totalCompra: 0 };
       }
 
-      pagamentosPorUsuario[userId].totalPagamentos += 1; //Incrementa a contagem de pagamentos do usuário
       pagamentosPorUsuario[userId].totalCompra += valorPagamento; //Soma o valor do pagamento ao total de usuário
       somaTotalCompras += valorPagamento; //Soma o valor do pagamento ao total global
+
     });
 
+    const resposta = {
     //Numero total de usuários distintos
-    const totalUsuarios = Object.keys(pagamentosPorUsuario).length;
-
-    //Formatar o retorno com objetos para cada informação
-    let resposta = {
-      totalUsuarios: totalUsuarios,
-      detalhesUsuarios: [],
-      somaTotalCompras: somaTotalCompras,
-    };
+    totalUsuarios: Object.keys(pagamentosPorUsuario).length,
+    //detalhes da compra do usuário
+    detalhesUsuarios: [],
+    somaTotalCompras: somaTotalCompras,
+    }
 
     //Adicionar o total de compra de cada usuário
     Object.keys(pagamentosPorUsuario).forEach((userId) => {
-      const { totalCompra } = pagamentosPorUsuario[userId];
+      const { nome, totalCompra } = pagamentosPorUsuario[userId];
       resposta.detalhesUsuarios.push({
         userId: userId,
+        nome: nome, 
         totalCompra: totalCompra,
       });
     });
 
-    res.status(200).send({
-        totalUsuarios: resposta.totalUsuarios,
-        detalhesUsuarios: resposta.detalhesUsuarios,
-        somaTotalCompras: resposta.somaTotalCompras,
-    });
+    res.status(200).send(resposta);
 
   } catch (err) {
     return res.status(500).send({ message: err.message });
