@@ -9,23 +9,40 @@ const findProdutoById = async (produtoId) => {
     return await Produto.findById(produtoId);
 };
 
-const addToSacola = async (cpf, produtoId, quantidade) => {
+const findProdutoByNome = async (produtoNome) => {
+    return await Produto.findOne({
+        nome:{ $regex: new RegExp(`^${produtoNome}$`, "i")}
+    });
+};
+
+const addToSacola = async ({cpf, produtoId, produtoNome, quantidade}) => { 
+    //adiciona e acrescenta produto, por ID ou nome e quantidade
+
     //Encontrar o usuário pelo CPF
     const user = await findUserByCpf(cpf);
     if (!user) throw new Error("Usuário não encontrado");
 
-    //Verifica se o produto existe
-    const produto = await findProdutoById(produtoId);
-    if (!produto) throw new Error("Produto não encontrado");
+    let produto; //começa vazia
 
+    if (produtoId){
+        produto = await findProdutoById(produtoId);
+        } else if (produtoNome){
+            produto = await findProdutoByNome(produtoNome);
+        } else {
+            throw new Error("Informe o Produto");
+        }
+    
+        if (!produto) throw new Error("Produto não encontrado");
+        
     //Adicionar o produto a sacola
-    const existingProduct = user.sacola.find(item => item.produto.toString() === produtoId);
+    const existingProduct = user.sacola.find(item => item.produto && item.produto._id.toString() === produto._id.toString());
+
     if (existingProduct) {
         //Se o produto ja existir na sacola, apenas atualizar a quantidade
-        existingProduct.quantidade += quantidade;
+        existingProduct.quantidade += Number(quantidade);
     } else {
         //Caso contrário, adiciona o produto a sacola
-        user.sacola.push({ produto: produtoId, quantidade });
+        user.sacola.push({ produto: produto._id, quantidade: Number(quantidade) });
     }
 
     //Salvar as alterações no usuário
@@ -43,6 +60,9 @@ const removeFromSacola = async (cpf, produtoId) => {
 
     //Encontrar o produto na sacola
     const produtoRemovido = user.sacola.find(item => item.produto._id.toString() === produtoId);
+
+    console.log("Produto recebido:", produtoId);
+    console.log("Produtos na sacola:", user.sacola.map(item => item.produto._id.toString()));
 
     //Remover o produto da sacola
     user.sacola = user.sacola.filter(item => item.produto._id.toString() !== produtoId);

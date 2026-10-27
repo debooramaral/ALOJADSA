@@ -38,7 +38,7 @@ const findAll = async (req, res) => {
     let somaTotalCompras = 0;
 
     pagamento.forEach((pagamento) => {
-      const pagamentoId = pagamento._id?.toString(); //Separa pagamento por ID
+      const pagamentoId = pagamento.id?.toString(); //Separa pagamento por ID
       const userId = pagamento.usuario?.id.toString(); //Garante que pega o ID corretamente
       const userName = pagamento.usuario?.nome; //Obtendo o nome do usuário
       const valorPagamento = pagamento.total; //Acessa o valor total de pagamento

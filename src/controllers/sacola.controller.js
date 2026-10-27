@@ -1,13 +1,14 @@
 import * as sacolaService from "../services/sacola.service.js";
 
-//Adicionar Produto a sacola
+//Adicionar Produto a sacola - CPF
 const addToSacola = async (req, res) => {
     const { cpf } = req.params; //CPF do usuário
-    const { produtoId, quantidade } = req.body; //Produto e quantidade a ser adicionada
+    const { produtoId, produtoNome } = req.body; //Produto a ser adicionada
+    const quantidade = Number(req.body.quantidade); //Quantidade forçando numero
 
     try {
         //Pega do service
-        const user = await sacolaService.addToSacola(cpf, produtoId, quantidade);
+        const user = await sacolaService.addToSacola({cpf, produtoId, produtoNome, quantidade});
         //Detalhes do usuário e do produto
         res.status(200).send({
             message: "Produto adicionado à sacola",
