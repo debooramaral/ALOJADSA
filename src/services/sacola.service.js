@@ -59,18 +59,25 @@ const removeFromSacola = async (cpf, produtoId) => {
     if (!user) throw new Error("Usuário não encontrado");
 
     //Encontrar o produto na sacola
-    const produtoRemovido = user.sacola.find(item => item.produto._id.toString() === produtoId);
+    const itemIndex = user.sacola.findIndex(item => item.produto._id.toString() === produtoId);
 
-    console.log("Produto recebido:", produtoId);
-    console.log("Produtos na sacola:", user.sacola.map(item => item.produto._id.toString()));
+    if(itemIndex === -1){
+        throw new Error("Produto não encontrado na sacola");
+    }
 
-    //Remover o produto da sacola
-    user.sacola = user.sacola.filter(item => item.produto._id.toString() !== produtoId);
+    const item = user.sacola[itemIndex];
+
+    //Diminuir a quantidade ou remover produto
+    if(item.quantidade > 1){
+        item.quantidade -= 1;
+    } else {
+        user.sacola.splice(itemIndex, 1);
+    }
 
     //Salvar as alterações no usuário
     await user.save();
     
-    return { user, produtoRemovido };
+    return { user, itemIndex };
 };
 
 const viewSacola = async (cpf) => {
@@ -78,7 +85,24 @@ const viewSacola = async (cpf) => {
     const user = await findUserByCpf(cpf);
     if (!user) throw new Error("Usuário não encontrado");
 
-    return user;
+    //Calcular subtotal de cada produto
+    const sacola = user.sacola.map(item => {
+        const preçoUnitario = item.produto.preço;
+        const subtotal = preçoUnitario * item.quantidade;
+
+        return{
+            produto: item.produto, preçoUnitario,
+            quantidade: item.quantidade, subtotal
+        };
+    });
+
+    //Calcular quantidade total de produtos
+    const totalItens = sacola.reduce((total, item) => total + item.quantidade, 0);
+
+    //Calcular valor total da sacola
+    const totalSacola = sacola.reduce((total, item) => total + item.subtotal, 0);
+
+    return {user, sacola, totalItens, totalSacola};
 };
 
 export { addToSacola, removeFromSacola, viewSacola };

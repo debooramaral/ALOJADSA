@@ -31,10 +31,11 @@ const removeFromSacola = async (req, res) => {
 
     try {
         //Pega do service
-        const { user, produtoRemovido } = await sacolaService.removeFromSacola(cpf, produtoId);
+        const { user } = await sacolaService.removeFromSacola(cpf, produtoId);
+
         //Detalhes do usuário e do produto
         res.status(200).send({
-            message: `Produto ${produtoRemovido.produto.nome} Removido da Sacola`,
+            message: "Sacola atualizada com sucesso",
             sacola: user.sacola
         });
     } catch (err) {
@@ -47,7 +48,8 @@ const viewSacola = async (req, res) => {
 
     try {
         //Pega do service
-        const user = await sacolaService.viewSacola(cpf);
+        const {user, sacola, totalItens, totalSacola} = await sacolaService.viewSacola(cpf);
+
         //Detalhes do usuário e do produto
         res.status(200).send({
             usuario: {
@@ -56,14 +58,12 @@ const viewSacola = async (req, res) => {
                 telefone: user.telefone,
                 email: user.email
             },
-            sacola: user.sacola.map(item => ({
-                produto: item.produto,
-                quantidade: item.quantidade
-            }))
-        });
+            sacola, totalItens, totalSacola
+            });
+        
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
-}; 
+};
 
 export { addToSacola, removeFromSacola, viewSacola };
